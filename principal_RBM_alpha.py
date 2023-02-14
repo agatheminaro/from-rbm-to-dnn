@@ -51,3 +51,10 @@ class RBM:
             v = np.reshape(v, (20, 16))
             plt.imshow(v, cmap="gray")
             plt.show()
+
+    def generer_image_RBM_without_plot(self, nb_gibbs):
+        v = (np.random.rand(self.p) < 1 / 2) * 1
+        for _ in range(nb_gibbs):
+            h = (np.random.rand(self.q) < self.entree_sortie_RBM(v)) * 1
+            v = (np.random.rand(self.p) < self.sortie_entree_RBM(h)) * 1
+        return v
