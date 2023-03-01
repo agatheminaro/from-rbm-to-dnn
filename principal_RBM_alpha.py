@@ -17,7 +17,7 @@ class RBM:
         return 1 / (1 + np.exp(-H @ self.RBM_W.T + self.RBM_a))
 
     def train_RBM(self, X, epsilon, batch_size, nb_epochs):
-        for epoch in range(nb_epochs):
+        for _ in range(nb_epochs):
             X_copy = X.copy()
             np.random.shuffle(X_copy)
             for batch in range(0, X_copy.shape[0], batch_size):
@@ -43,7 +43,7 @@ class RBM:
             print(np.sum((X - X_rec) ** 2) / X.shape[0])
 
     def generer_image_RBM(self, nb_data, nb_gibbs):
-        for i in range(nb_data):
+        for _ in range(nb_data):
             v = (np.random.rand(self.p) < 1 / 2) * 1
             for _ in range(nb_gibbs):
                 h = (np.random.rand(self.q) < self.entree_sortie_RBM(v)) * 1
