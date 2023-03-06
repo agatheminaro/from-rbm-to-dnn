@@ -11,7 +11,9 @@ class DNN(DBN):
         self.dbn.train_DBN(X, epsilon, batch_size, nb_epochs)
 
     def calcul_softmax(self, rbm, X):
-        return np.exp(X @ rbm.RBM_W + rbm.RBM_b)/np.sum(np.exp(X @ rbm.RBM_W + rbm.RBM_b), axis=1)
+        Z = X @ rbm.RBM_W + rbm.RBM_b
+        e_x = np.exp(Z-np.max(Z), keepdims=True)
+        return e_x / np.sum(e_x, axis=1, keepdims=True)
     
     def cross_entropy(y_true, y_pred):
         loss = []
