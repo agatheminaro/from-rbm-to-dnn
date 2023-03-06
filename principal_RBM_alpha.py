@@ -59,11 +59,11 @@ class RBM:
             
             if (epoch % 20 == 0):
                 rand_idx = np.random.randint(X.shape[0])
-                if (X[rand_idx].shape[0]==320):
-                    self.epoch_rbm.append(f'Epoch{epoch}/{nb_epochs}')
-                    self.errors_list.append(np.sum((X[rand_idx] - X_rec[rand_idx]) ** 2) / X[rand_idx].shape[0])
-                    self.X_rec_list.append(X_rec[rand_idx])
-                    self.X_list.append(X[rand_idx])
+                #if (X[rand_idx].shape[0]==320):
+                self.epoch_rbm.append(f'Epoch{epoch}/{nb_epochs}')
+                self.errors_list.append(np.sum((X[rand_idx] - X_rec[rand_idx]) ** 2) / X[rand_idx].shape[0])
+                self.X_rec_list.append(X_rec[rand_idx])
+                self.X_list.append(X[rand_idx])
         return errors_all
 
     def generer_image_RBM(self, nb_data, nb_gibbs):
@@ -103,7 +103,7 @@ class RBM:
     def features_extracted(self, row, col):
         indexes = [np.random.randint(0, self.RBM_W.shape[0]) for idx in range(row*col)]
         
-        fig, axes = plt.subplots(row, col, figsize=(5,3))
+        fig, axes = plt.subplots(row, col, figsize=(7,5))
         for i, idx in enumerate(indexes):
             ax = axes[i // col, i % col]
             ax.imshow(self.RBM_W[:, idx].reshape(20,16), cmap='gray')
@@ -115,10 +115,9 @@ class RBM:
         fig.tight_layout()
         plt.show()
         
-        
 
     def generate_for_analysis(self, nb_gibbs, col=5, row=1):
-        p, q = self.RBM_W.shape
+        #p, q = self.RBM_W.shape
         nb_data = row*col
 
         fig = plt.figure(figsize=(5, 3))
@@ -138,3 +137,6 @@ class RBM:
 
         plt.tight_layout()
         plt.show()
+        
+        
+    
