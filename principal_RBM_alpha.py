@@ -61,7 +61,6 @@ class RBM:
 
             if epoch % 20 == 0:
                 rand_idx = np.random.randint(X.shape[0])
-                # if (X[rand_idx].shape[0]==320):
                 self.epoch_rbm.append(f"Epoch{epoch}/{nb_epochs}")
                 self.errors_list.append(
                     np.sum((X[rand_idx] - X_rec[rand_idx]) ** 2) / X[rand_idx].shape[0]
@@ -70,23 +69,25 @@ class RBM:
                 self.X_list.append(X[rand_idx])
 
                 if verbose:
-                    print(
-                        f"  Epoch {epoch}/{nb_epochs} : RMSE = {errors_all[-1]}",
-                        end="\r",
-                        flush=True,
-                    )
+                    print(f"  Epoch {epoch}/{nb_epochs} : RMSE = {errors_all[-1]}")
 
         return self, errors_all
 
-    def generer_image_RBM(self, nb_data, nb_gibbs):
-        for _ in range(nb_data):
+    def generer_image_RBM(self, nb_data, nb_gibbs, type_data="alpha_digits"):
+        if type_data == "alpha_digits":
+            reshape_size = (20, 16)
+        elif type_data == "mnist_digits":
+            reshape_size = (28, 28)
+        for i in range(nb_data):
             v = (np.random.rand(self.p) < 1 / 2) * 1
             for _ in range(nb_gibbs):
                 h = (np.random.rand(self.q) < self.entree_sortie_RBM(v)) * 1
                 v = (np.random.rand(self.p) < self.sortie_entree_RBM(h)) * 1
-            v = np.reshape(v, (20, 16))
+            v = np.reshape(v, reshape_size)
+            plt.subplot(nb_data // 5, 5, i + 1)
             plt.imshow(v, cmap="gray")
-            plt.show()
+            plt.axis("off")
+        plt.show()
 
     def generer_image_RBM_without_plot(self, nb_gibbs):
         v = (np.random.rand(self.p) < 1 / 2) * 1

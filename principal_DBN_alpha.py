@@ -37,16 +37,23 @@ class DBN:
             self.losses.append(loss)
         return self, self.losses
 
-    def generer_image_DBN(self, nb_data, nb_gibbs):
+    def generer_image_DBN(self, nb_data, nb_gibbs, type_data="alpha_digits"):
+        if type_data == "alpha_digits":
+            reshape_size = (20, 16)
+        elif type_data == "mnist_digits":
+            reshape_size = (28, 28)
+
         for i in range(nb_data):
             v = self.RBM_list[-1].generer_image_RBM_without_plot(nb_gibbs)
 
             for i in reversed(range(len(self.RBM_list) - 1)):
                 v = self.RBM_list[i].sortie_entree_RBM(v)
 
-            v = np.reshape(v, (20, 16))
+            v = np.reshape(v, reshape_size)
+            plt.subplot(nb_data // 5, 5, i + 1)
             plt.imshow(v, cmap="gray")
-            plt.show()
+            plt.axis("off")
+        plt.show()
 
     def generate_for_analysis_DBN(
         self, nb_gibbs, col=5, row=1, param_analysed="epsilon", nb_digit=None
