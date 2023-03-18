@@ -5,18 +5,18 @@ import matplotlib.pyplot as plt
 
 class DNN(DBN):
     def __init__(self, config):
-        self.dbn = DBN(config)
+        super().__init__(config)
         self.classification_layer = []
 
-    def pretrain_DNN(self, X, epsilon, batch_size, nb_epochs):
-        self.dbn.train_DBN(X, epsilon, batch_size, nb_epochs)
+    def pretrain_DNN(self, X, epsilon, batch_size, nb_epochs, verbose=False):
+        return self.train_DBN(X, epsilon, batch_size, nb_epochs, verbose)
 
     def calcul_softmax(self, rbm, X):
         Z = X @ rbm.RBM_W + rbm.RBM_b
-        e_x = np.exp(Z - np.max(Z), keepdims=True)
-        return e_x / np.sum(e_x, axis=1, keepdims=True)
+        exp_z = np.exp(Z)
+        return exp_z / np.sum(exp_z, axis=1).reshape(-1, 1)
 
-    def cross_entropy(y_true, y_pred):
+    def cross_entropy(self, y_true, y_pred):
         loss = []
         for k in range(y_true.shape[0]):
             loss.append(
@@ -31,15 +31,18 @@ class DNN(DBN):
 
     def entree_sortie_reseau(self, X):
         sortie_list = [X]
-        for rbm in self.dbn.RBM_list[:-1]:
+        for rbm in self.RBM_list[:-1]:
             sortie = rbm.entree_sortie_RBM(sortie_list[-1])
             sortie_list.append(sortie)
-        sortie_list.append(self.calcul_softmax(self.dbn.RBM_list[-1], sortie_list[-1]))
+        sortie_list.append(self.calcul_softmax(self.RBM_list[-1], sortie_list[-1]))
         return sortie_list
 
-    def retropropagation(self, X, y, epsilon, batch_size, nb_epochs):
+    def retropropagation(self, X, y, epsilon, batch_size, nb_epochs, verbose=True):
         loss = []
-        for _ in range(nb_epochs):
+        self.epsilon = epsilon
+        self.batch_size = batch_size
+
+        for i in range(nb_epochs):
             loss_batch = []
             X_copy = X.copy()
             y_copy = y.copy()
@@ -70,17 +73,23 @@ class DNN(DBN):
                     rbm.RBM_b -= (
                         epsilon * np.mean(delta_sortie, axis=0) / true_batch_size
                     )
+
                 loss_batch += self.cross_entropy(y_batch, sortie_list[-1])
 
             loss.append(np.mean(loss_batch))
 
-        return loss
+            if i % 25 == 0 and verbose:
+                print(f"Epoch {i}/{nb_epochs}: loss is {loss[-1]}")
 
-    def test_dnn(self, X, y):
-        for rbm in self.dbn.RBM_list[:-1]:
+        return self, loss
+
+    def test_dnn(self, X, y, verbose=True):
+        for rbm in self.RBM_list[:-1]:
             X = rbm.entree_sortie_RBM(X)
-        predictions = np.argmax(self.calcul_softmax(self.dbn.RBM_list[-1], X), axis=1)
-        print(
-            "Error rate: ", 1 - np.sum(predictions == np.argmax(y, axis=1)) / y.shape[0]
+        predictions = np.argmax(self.calcul_softmax(self.RBM_list[-1], X), axis=1)
+        error_rate = 100 * (
+            1 - np.sum(predictions == np.argmax(y, axis=1)) / y.shape[0]
         )
-        return 1 - np.sum(predictions == np.argmax(y, axis=1)) / y.shape[0]
+        if verbose:
+            print("Error rate: ", error_rate)
+        return error_rate

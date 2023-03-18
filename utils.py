@@ -16,3 +16,11 @@ def show_alpha_digits(data, row, col):
     fig.subplots_adjust(wspace=0, hspace=0)
     fig.tight_layout()
     plt.show()
+
+
+def subsample_data_set(X, y, nb_data=None):
+    if nb_data is None:
+        return X, y
+    else:
+        indexes = np.random.permutation(X.shape[0])
+        return X[indexes[:nb_data]], y[indexes[:nb_data]]
