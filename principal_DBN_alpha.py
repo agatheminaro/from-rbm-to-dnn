@@ -43,21 +43,6 @@ class DBN:
             plt.imshow(v, cmap="gray")
             plt.show()
 
-    def display_image_DBN_vs_original(self):
-        for i in range(len(self.losses[-1])):
-            print(self.epoch_dbn[i])
-            fig, ax = plt.subplots(1, 2, figsize=(3, 2))
-            ax[0].imshow(self.X_list[i].reshape(20, 16), cmap="gray")
-            ax[0].axis("off")
-            ax[0].set_title("Original_image", fontsize=7)
-
-            ax[1].imshow(self.X_rec_list[i].reshape(20, 16), cmap="gray")
-            ax[1].axis("off")
-            ax[1].set_title(f"RBM_image : RMSE = {self.losses[i]}", fontsize=7)
-
-            fig.tight_layout()
-            plt.show()
-
     def generate_for_analysis_DBN(
         self, nb_gibbs, col=5, row=1, param_analysed="epsilon", nb_digit=None
     ):
