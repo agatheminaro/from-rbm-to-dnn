@@ -25,7 +25,7 @@ class RBM:
     def sortie_entree_RBM(self, H):
         return self.sigmoid(H @ self.RBM_W.T + self.RBM_a)
 
-    def train_RBM(self, X, epsilon, batch_size, nb_epochs):
+    def train_RBM(self, X, epsilon, batch_size, nb_epochs, verbose=False):
         self.epoch_rbm = []
         self.X_rec_list = []
         self.errors_list = []
@@ -68,6 +68,14 @@ class RBM:
                 )
                 self.X_rec_list.append(X_rec[rand_idx])
                 self.X_list.append(X[rand_idx])
+
+                if verbose:
+                    print(
+                        f"  Epoch {epoch}/{nb_epochs} : RMSE = {errors_all[-1]}",
+                        end="\r",
+                        flush=True,
+                    )
+
         return self, errors_all
 
     def generer_image_RBM(self, nb_data, nb_gibbs):

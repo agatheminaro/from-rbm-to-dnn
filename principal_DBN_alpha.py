@@ -16,17 +16,22 @@ class DBN:
         for i in range(len(self.config) - 1):
             self.RBM_list.append(RBM(config[i], config[i + 1]))
 
-    def train_DBN(self, X, epsilon, batch_size, nb_epochs):
+    def train_DBN(self, X, epsilon, batch_size, nb_epochs, verbose=False):
         self.epsilon = epsilon
         self.batch_size = batch_size
         self.losses = []
         X_copy = X.copy()
-        for rbm in self.RBM_list:
+        if verbose:
+            print(f"Training DBN with {len(self.RBM_list)} RBM(s)")
+        for i, rbm in enumerate(self.RBM_list):
+            if verbose:
+                print(f"Training RBM {i+1} / {len(self.RBM_list)}")
             rbm, loss = rbm.train_RBM(
                 X=X_copy,
                 epsilon=self.epsilon,
                 batch_size=self.batch_size,
                 nb_epochs=nb_epochs,
+                verbose=verbose,
             )
             X_copy = rbm.entree_sortie_RBM(X_copy)
             self.losses.append(loss)
