@@ -60,9 +60,9 @@ class VAE(torch.nn.Module):
 
 def train_vae(vae_model, vae_optimizer, data_train_loader, epoch, verbose=True):
     train_loss = 0
-    for batch_idx, (data, _) in enumerate(data_train_loader):
+    for data in data_train_loader:
         vae_optimizer.zero_grad()
-
+        data = data[0]
         y, z_mu, z_log_var = vae_model(data)
         loss_vae = vae_model.loss_function(data, y, z_mu, z_log_var)
         loss_vae.backward()
@@ -102,11 +102,9 @@ def pytorch_to_numpy(x):
 
 
 def display_images(imgs):
-    r = 2
-    c = 5
-    _, axs = plt.subplots(r, c)
-    for j in range(c):
-        # black and white images
-        axs[j].imshow(pytorch_to_numpy(imgs[j, 0, :, :]), cmap="gray")
-        axs[j].axis("off")
+    for i in range(imgs.shape[0]):
+        plt.subplot(2, 5, i + 1)
+        plt.imshow(imgs[i].reshape(28, 28), cmap="gray")
+        plt.axis("off")
+    plt.tight_layout()
     plt.show()

@@ -41,8 +41,9 @@ class DNN(DBN):
         loss = []
         self.epsilon = epsilon
         self.batch_size = batch_size
-
-        for i in range(nb_epochs):
+        if verbose:
+            print(f"Training DNN")
+        for nb_epoch in range(nb_epochs):
             loss_batch = []
             X_copy = X.copy()
             y_copy = y.copy()
@@ -78,8 +79,8 @@ class DNN(DBN):
 
             loss.append(np.mean(loss_batch))
 
-            if i % 25 == 0 and verbose:
-                print(f"Epoch {i}/{nb_epochs}: loss is {loss[-1]}")
+            if nb_epoch % 25 == 0 and verbose:
+                print(f"    Epoch {nb_epoch}/{nb_epochs}: loss is {loss[-1]}")
 
         return self, loss
 

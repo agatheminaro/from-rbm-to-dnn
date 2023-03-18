@@ -46,8 +46,8 @@ class DBN:
         for i in range(nb_data):
             v = self.RBM_list[-1].generer_image_RBM_without_plot(nb_gibbs)
 
-            for i in reversed(range(len(self.RBM_list) - 1)):
-                v = self.RBM_list[i].sortie_entree_RBM(v)
+            for j in reversed(range(len(self.RBM_list) - 1)):
+                v = self.RBM_list[j].sortie_entree_RBM(v)
 
             v = np.reshape(v, reshape_size)
             plt.subplot(nb_data // 5, 5, i + 1)
