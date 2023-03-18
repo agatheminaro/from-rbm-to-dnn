@@ -30,13 +30,15 @@ class RBM:
         self.X_rec_list = []
         self.errors_list = []
         self.X_list = []
+        self.epsilon = epsilon
+        self.batch_size = batch_size
         errors_all = []
 
         for epoch in range(nb_epochs):
             X_copy = X.copy()
             np.random.shuffle(X_copy)
-            for batch in range(0, X_copy.shape[0], batch_size):
-                X_batch = X_copy[batch : batch + batch_size]
+            for batch in range(0, X_copy.shape[0], self.batch_size):
+                X_batch = X_copy[batch : batch + self.batch_size]
                 true_batch_size = X_batch.shape[0]
                 v_0 = X_batch
                 p_h_v_0 = self.entree_sortie_RBM(v_0)
@@ -49,9 +51,9 @@ class RBM:
                 grad_b = np.sum(p_h_v_0 - p_h_v_1, axis=0)
                 grad_W = np.dot(v_0.T, p_h_v_0) - np.dot(v_1.T, p_h_v_1)
 
-                self.RBM_a += epsilon / true_batch_size * grad_a
-                self.RBM_b += epsilon / true_batch_size * grad_b
-                self.RBM_W += epsilon / true_batch_size * grad_W
+                self.RBM_a += self.epsilon / true_batch_size * grad_a
+                self.RBM_b += self.epsilon / true_batch_size * grad_b
+                self.RBM_W += self.epsilon / true_batch_size * grad_W
 
             H = self.entree_sortie_RBM(X)
             X_rec = self.sortie_entree_RBM(H)
@@ -117,8 +119,9 @@ class RBM:
         fig.tight_layout()
         plt.show()
 
-    def generate_for_analysis(self, nb_gibbs, col=5, row=1):
-        # p, q = self.RBM_W.shape
+    def generate_for_analysis(
+        self, nb_gibbs, col=5, row=1, param_analysed="epsilon", nb_digit=None
+    ):
         nb_data = row * col
 
         fig = plt.figure(figsize=(5, 3))
@@ -135,5 +138,15 @@ class RBM:
             ax.imshow(v, cmap="gray")
             ax.axis("off")
 
+        if param_analysed == "epsilon":
+            plt.title(f"RBM_image : epsilon = {self.epsilon}", fontsize=7, loc="left")
+        elif param_analysed == "batch_size":
+            plt.title(
+                f"RBM_image : batch_size = {self.batch_size}", fontsize=7, loc="left"
+            )
+        elif param_analysed == "q":
+            plt.title(f"RBM_image : q = {self.q}", fontsize=7, loc="left")
+        elif param_analysed == "nb_data":
+            plt.title(f"RBM_image : nb_data = {nb_digit}", fontsize=7, loc="left")
         plt.tight_layout()
         plt.show()
