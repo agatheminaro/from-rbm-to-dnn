@@ -1,6 +1,7 @@
 import scipy
 import numpy as np
 from mlxtend.data import loadlocal_mnist
+from sklearn.preprocessing import OneHotEncoder
 
 
 def alpha_digit(indexes, path="data/binaryalphadigs.mat"):
@@ -30,5 +31,9 @@ def mnist_data(path="data/"):
     # Binarisation of our data
     X_train = (X_train >= 127).astype(int)
     X_test = (X_test >= 127).astype(int)
+
+    oh = OneHotEncoder()
+    y_train = oh.fit_transform(y_train.reshape(-1, 1)).toarray()
+    y_test = oh.transform(y_test.reshape(-1, 1)).toarray()
 
     return X_train, X_test, y_train, y_test
