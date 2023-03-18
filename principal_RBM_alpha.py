@@ -68,7 +68,7 @@ class RBM:
                 )
                 self.X_rec_list.append(X_rec[rand_idx])
                 self.X_list.append(X[rand_idx])
-        return errors_all
+        return self, errors_all
 
     def generer_image_RBM(self, nb_data, nb_gibbs):
         for _ in range(nb_data):
